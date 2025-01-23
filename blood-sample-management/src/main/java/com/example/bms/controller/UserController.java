@@ -7,6 +7,7 @@ import com.example.bms.service.UserService;
 import com.example.bms.utility.ResponseStructure;
 import com.example.bms.utility.RestResponseBuilder;
 
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +21,7 @@ public class UserController {
     private final RestResponseBuilder responseBuilder;
 
     @PostMapping("/register")
-    public ResponseEntity<ResponseStructure<UserResponse>> addUser(@RequestBody UserRequest userRequest){
+    public ResponseEntity<ResponseStructure<UserResponse>> addUser(@RequestBody @Valid UserRequest userRequest){
         UserResponse user = userService.addUser(userRequest);
         return responseBuilder.success(HttpStatus.CREATED, "user created", user);
     }
