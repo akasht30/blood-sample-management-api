@@ -18,12 +18,12 @@ public class UserExceptionHandler {
     private final RestResponseBuilder restResponseBuilder;
 
     @ExceptionHandler
-    public ResponseEntity<ErrorStructure> handleUserNotFoundById(UserNotFoundByidException ex){
+    public ResponseEntity<ErrorStructure<String>> handleUserNotFoundById(UserNotFoundByidException ex){
         return restResponseBuilder.error(HttpStatus.NOT_FOUND.value(),ex.getMessage(), "user not found by id");
     }
 
     @ExceptionHandler
-    public ResponseEntity<ErrorStructure> handleUserNotUpdated(UserNotUpdatedException ex){
+    public ResponseEntity<ErrorStructure<String>> handleUserNotUpdated(UserNotUpdatedException ex){
         return restResponseBuilder.error(HttpStatus.NOT_FOUND.value(),ex.getMessage(),"user not updated");
     }
 }

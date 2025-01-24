@@ -55,7 +55,7 @@ public class UserServiceImplementation implements UserService {
     public UserResponse addUser(UserRequest userRequest) {
 
 
-        User user = mapToUser(userRequest,new User());
+        User user = this.mapToUser(userRequest,new User());
 
         user = userRepository.save(user);
 

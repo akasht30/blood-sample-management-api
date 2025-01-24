@@ -1,17 +1,17 @@
 package com.example.bms.utility;
 
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
 @Builder
-public class ErrorStructure {
+@AllArgsConstructor
+@NoArgsConstructor
+public class ErrorStructure<T> {
 
     private int status;
     private String message;
-    private String rootCause;
+    private T rootCause;
 
 }

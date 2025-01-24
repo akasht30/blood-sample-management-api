@@ -17,9 +17,9 @@ public class RestResponseBuilder {
 
     }
 
-    public ResponseEntity<ErrorStructure> error(int status,String message,String rootCause) {
+    public <T> ResponseEntity<ErrorStructure<T>> error(int status,String message,T rootCause) {
 
-        return  ResponseEntity.status(status).body(ErrorStructure.builder()
+        return  ResponseEntity.status(status).body(ErrorStructure.<T>builder()
                 .status(status)
                 .message(message)
                 .rootCause(rootCause)
