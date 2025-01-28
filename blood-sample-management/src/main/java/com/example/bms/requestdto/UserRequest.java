@@ -2,11 +2,12 @@ package com.example.bms.requestdto;
 
 import com.example.bms.entity.enums.BloodGroup;
 import com.example.bms.entity.enums.Gender;
-import com.example.bms.entity.enums.Role;
+
 import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.*;
 import lombok.*;
 
+import java.time.LocalDate;
 
 
 @Setter
@@ -49,13 +50,12 @@ public class UserRequest {
     private BloodGroup bloodGroup;
     @Enumerated
     private Gender gender;
-    @Enumerated
-    private Role role;
     @NotBlank
     @NotNull
     @Pattern( regexp = "^[A-Za-z]+$",
             message = "Invalid city name! Only alphabetic letters (A-Z, a-z) are allowed.")
     private String availableCity;
+    private LocalDate lastDonatedAt;
 
 
 }

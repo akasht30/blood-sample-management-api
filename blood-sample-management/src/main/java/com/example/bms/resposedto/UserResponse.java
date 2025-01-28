@@ -2,7 +2,7 @@ package com.example.bms.resposedto;
 
 import com.example.bms.entity.enums.BloodGroup;
 import com.example.bms.entity.enums.Gender;
-import com.example.bms.entity.enums.Role;
+import com.example.bms.entity.enums.UserRole;
 import jakarta.persistence.Enumerated;
 import lombok.*;
 
@@ -22,14 +22,12 @@ public class UserResponse {
     private LocalDate lastDonatedAt;
     private String availableCity;
     private boolean verfied;
-    private LocalDate registeredDate;
-    private LocalDateTime lastUpdatedTime;
     @Enumerated
     private BloodGroup bloodGroup;
     @Enumerated
     private Gender gender;
     @Enumerated
-    private Role role;
+    private UserRole role;
 
 
 }

@@ -1,15 +1,26 @@
 package com.example.bms.serviceimplementation;
 
+import com.example.bms.entity.Address;
+import com.example.bms.entity.Admin;
 import com.example.bms.entity.User;
-import com.example.bms.excepiton.UserNotUpdatedException;
+import com.example.bms.entity.enums.UserRole;
+import com.example.bms.excepiton.NotFoundByidException;
+import com.example.bms.excepiton.NotUpdatedException;
+import com.example.bms.repository.AddressRepository;
+import com.example.bms.repository.AdminRepository;
 import com.example.bms.repository.UserRepository;
+import com.example.bms.requestdto.AddressRequest;
 import com.example.bms.requestdto.UserRequest;
+import com.example.bms.resposedto.AddressResponse;
+import com.example.bms.resposedto.AdminResponse;
 import com.example.bms.resposedto.UserResponse;
+import com.example.bms.security.AuothUtil;
 import com.example.bms.service.UserService;
 import lombok.AllArgsConstructor;
-import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.Optional;
 
 @Service
@@ -17,7 +28,13 @@ import java.util.Optional;
 public class UserServiceImplementation implements UserService {
 
 
+    private final AuothUtil auothUtil;
+    private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
+    private final AdminRepository adminRepository;
+    private final AddressRepository addressRepository;
+
+
 /// /---============----------------------------====================
     private  UserResponse mapToUserResponse(User exUser) {
         return UserResponse.builder()
@@ -27,13 +44,13 @@ public class UserServiceImplementation implements UserService {
                 .lastDonatedAt(exUser.getLastDonatedAt())
                 .availableCity(exUser.getAvailableCity())
                 .verfied(exUser.isVerfied())
-                .registeredDate(exUser.getRegisteredDate())
-                .lastUpdatedTime(exUser.getLastUpdatedTime())
                 .bloodGroup(exUser.getBloodGroup())
                 .gender(exUser.getGender())
                 .role(exUser.getRole())
                 .build();
     }
+
+
 
     private  User mapToUser(UserRequest userRequest,User exUser) {
         exUser.setAge(userRequest.getAge());
@@ -42,8 +59,9 @@ public class UserServiceImplementation implements UserService {
         exUser.setUserName(userRequest.getUserName());
         exUser.setPhoneNumber(userRequest.getPhoneNumber());
         exUser.setAvailableCity(userRequest.getAvailableCity());
-        exUser.setPassword(userRequest.getPassword());
+        exUser.setPassword(passwordEncoder.encode(userRequest.getPassword()));
         exUser.setBloodGroup(userRequest.getBloodGroup());
+        exUser.setLastDonatedAt(userRequest.getLastDonatedAt());
 
         return exUser;
     }
@@ -55,10 +73,14 @@ public class UserServiceImplementation implements UserService {
     public UserResponse addUser(UserRequest userRequest) {
 
 
-        User user = mapToUser(userRequest,new User());
+        User user = this.mapToUser(userRequest,new User());
+
+        user.setRole(UserRole.USER);
+
 
         user = userRepository.save(user);
 
+
         return mapToUserResponse(user);
 
 
@@ -68,47 +90,108 @@ public class UserServiceImplementation implements UserService {
 
 
     @Override
-    public UserResponse findUserById(int userId) {
-        Optional<User> optional = userRepository.findById(userId);
+    public UserResponse findUserById() {
 
-        if (optional.isEmpty())
-            throw new UserNotUpdatedException("Failed to find user");
+        User exUser=auothUtil.getCurrentUser();
 
 
-        User user = optional.get();
-
-        return mapToUserResponse(user);
+        return mapToUserResponse(exUser);
     }
 
 
     @Override
-    public UserResponse updateUserById(UserRequest userRequest, int userId) {
-        Optional<User> optional = userRepository.findById(userId);
+    public UserResponse updateUserById(UserRequest userRequest) {
+        User exUser=auothUtil.getCurrentUser();
+        this.mapToUser(userRequest,exUser);
 
+        exUser=userRepository.save(exUser);
 
-        if (optional.isEmpty())
-            throw new UserNotUpdatedException("Failed To Update");
+        return mapToUserResponse(exUser);
 
+    }
 
-        User user=this.mapToUser(userRequest,optional.get());
+    @Override
+    public UserResponse promoteUser(int userId) {
+
+        Optional<User> optional=userRepository.findById(userId);
+
+        if(optional.isEmpty())
+            throw new NotUpdatedException("Failed to update");
+
+        User user=optional.get();
+
+        user.setRole(UserRole.GUEST_ADMIN);
 
         userRepository.save(user);
 
-//        User exUser = optional.get();
-//
-//        exUser.setAge(userRequest.getAge());
-//        exUser.setEmail(userRequest.getEmail());
-//        exUser.setGender(userRequest.getGender());
-//        exUser.setUserName(userRequest.getUserName());
-//        exUser.setPhoneNumber(userRequest.getPhoneNumber());
-//        exUser.setAvailableCity(userRequest.getAvailableCity());
-//        exUser.setPassword(userRequest.getPassword());
-//        exUser.setBloodGroup(userRequest.getBloodGroup());
+        Admin  admin=Admin.builder().user(user)
+                        .build();
+
+        adminRepository.save(admin);
+
+        return mapToUserResponse(user);
+    }
+
+    @Override
+    public AdminResponse addAdmin(UserRequest userRequest) {
+
+        User user=this.mapToUser(userRequest,new User());
+
+        user.setRole(UserRole.GUEST_ADMIN);
+
+        userRepository.save(user);
+
+        Admin  admin=Admin.builder().user(user)
+                .build();
 
 
+
+
+        adminRepository.save(admin);
+
+
+        return AdminResponse.builder()
+                .adminId(admin.getAdminID())
+                        .user(user).build();
+
+    }
+
+
+    @Override
+    public UserResponse verifyUser(int userId, boolean isVerified) {
+
+        Optional<User> optional=userRepository.findById(userId);
+
+        if(optional.isEmpty())
+            throw  new NotFoundByidException("user is not found");
+
+        User user=optional.get();
+
+        user.setVerfied(isVerified);
+
+        user=userRepository.save(user);
 
         return mapToUserResponse(user);
 
+
+    }
+
+    @Override
+    public UserResponse updateLastDonated(int userId, LocalDate lastDonatedAt) {
+
+        Optional<User> optional=userRepository.findById(userId);
+
+        if(optional.isEmpty())
+            throw  new NotFoundByidException("user is not found");
+
+        User user=optional.get();
+
+        user.setLastDonatedAt(lastDonatedAt);
+
+        user=userRepository.save(user);
+
+
+        return mapToUserResponse(user);
     }
 
 

@@ -6,7 +6,7 @@ import lombok.Getter;
 
 @AllArgsConstructor
 @Getter
-public class UserNotUpdatedException extends RuntimeException {
+public class NotUpdatedException extends RuntimeException {
     private final String message;
 
 }

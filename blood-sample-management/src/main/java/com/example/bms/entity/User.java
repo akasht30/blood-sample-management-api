@@ -4,15 +4,15 @@ package com.example.bms.entity;
 
 import com.example.bms.entity.enums.BloodGroup;
 import com.example.bms.entity.enums.Gender;
-import com.example.bms.entity.enums.Role;
+import com.example.bms.entity.enums.UserRole;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+@Setter
+@Getter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -36,125 +36,18 @@ public class User {
     @Enumerated
     private Gender gender;
     @Enumerated
-    private Role role;
+    private UserRole role;
+
+
+    @OneToOne(mappedBy = "user",fetch = FetchType.EAGER)
+    private Admin admin;
+
+    @OneToOne
+    private Address address;
 
 
 
 
-    public LocalDate getRegisteredDate() {
-        return registeredDate;
-    }
-
-    public void setRegisteredDate(LocalDate registeredDate) {
-        this.registeredDate = registeredDate;
-    }
-
-    public LocalDateTime getLastUpdatedTime() {
-        return lastUpdatedTime;
-    }
-
-    public void setLastUpdatedTime(LocalDateTime lastUpdatedTime) {
-        this.lastUpdatedTime = lastUpdatedTime;
-    }
-
-    public Role getRole() {
-        return role;
-    }
-
-    public void setRole(Role role) {
-        this.role = role;
-    }
-
-
-
-
-    public BloodGroup getBloodGroup() {
-        return bloodGroup;
-    }
-
-    public void setBloodGroup(BloodGroup bloodGroup) {
-        this.bloodGroup = bloodGroup;
-    }
-
-    public Gender getGender() {
-        return gender;
-    }
-
-    public void setGender(Gender gender) {
-        this.gender = gender;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public int getUserId() {
-        return userId;
-    }
-
-    public void setUserId(int userId) {
-        this.userId = userId;
-    }
-
-    public String getUserName() {
-        return userName;
-    }
-
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getPhoneNumber() {
-        return phoneNumber;
-    }
-
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
-    }
-
-    public int getAge() {
-        return age;
-    }
-
-    public void setAge(int age) {
-        this.age = age;
-    }
-
-    public LocalDate getLastDonatedAt() {
-        return lastDonatedAt;
-    }
-
-    public void setLastDonatedAt(LocalDate lastDonatedAt) {
-        this.lastDonatedAt = lastDonatedAt;
-    }
-
-    public String getAvailableCity() {
-        return availableCity;
-    }
-
-    public void setAvailableCity(String availableCity) {
-        this.availableCity = availableCity;
-    }
-
-    public boolean isVerfied() {
-        return verfied;
-    }
-
-    public void setVerfied(boolean verfied) {
-        this.verfied = verfied;
-    }
 }
 
 
