@@ -15,6 +15,7 @@ import com.example.bms.service.AddressService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import javax.swing.text.html.Option;
 import java.util.Optional;
 
 @Service
@@ -118,6 +119,126 @@ public class AddressServiceImplementation implements AddressService {
 
         hospitalRepository.save(hospital);
 
+
+        return mapToAddressReponse(address);
+    }
+
+    @Override
+    public AddressResponse getAddressbByUser(int userId) {
+
+        Optional<User>  optional=userRepository.findById(userId);
+
+        if(optional.isEmpty())
+            throw new NotFoundByidException("User is not found");
+
+        User user=optional.get();
+
+
+
+        Optional<Address> optional1=addressRepository.findById(user.getAddress().getAddressId());
+
+        if(optional1.isEmpty())
+            throw new NotFoundByidException("Address id not found");
+
+        Address address=optional1.get();
+
+
+        return mapToAddressReponse(address);
+    }
+
+    @Override
+    public AddressResponse getBankAddress(int bankId) {
+
+        Optional<BloodBank> optional=bloodBankRepository.findById(bankId);
+
+        if(optional.isEmpty())
+            throw new NotFoundByidException("Blood bank is not found");
+
+        BloodBank bloodBank=optional.get();
+
+        Optional<Address> optional1=addressRepository.findById(bloodBank.getAddress().getAddressId());
+
+        if(optional1.isEmpty())
+            throw new NotFoundByidException("Address not found");
+
+        Address address=optional1.get();
+
+        return mapToAddressReponse(address);
+
+    }
+
+    @Override
+    public AddressResponse getHospitalAddress(int hospitalId) {
+
+        Optional<Hospital> optional=hospitalRepository.findById(hospitalId);
+
+        if(optional.isEmpty())
+            throw new NotFoundByidException("User is not found");
+
+        Hospital hospital=optional.get();
+
+        Optional<Address> optional1=addressRepository.findById(hospital.getAddress().getAddressId());
+
+        if(optional1.isEmpty())
+            throw new NotFoundByidException("Address is not found");
+
+        Address address=optional1.get();
+
+        return mapToAddressReponse(address);
+    }
+
+    @Override
+    public AddressResponse updateUserById(AddressRequest addressRequest, int userId) {
+
+        Optional<User> optional=userRepository.findById(userId);
+        if(optional.isEmpty())
+            throw new NotFoundByidException("User is not found");
+
+        User user=optional.get();
+
+        Optional<Address> optional1=addressRepository.findById(user.getAddress().getAddressId());
+        if(optional1.isEmpty())
+            throw new NotFoundByidException("Address is not founnd");
+
+        Address address=mapToAddress(addressRequest,optional1.get());
+
+        addressRepository.save(address);
+
+        return mapToAddressReponse(address);
+    }
+
+    @Override
+    public AddressResponse updateHospitalAddress(AddressRequest addressRequest, int hospitalId) {
+
+        Optional<Hospital> optional=hospitalRepository.findById(hospitalId);
+        if (optional.isEmpty())
+            throw new NotFoundByidException("Hospital is not found");
+
+        Hospital hospital=optional.get();
+
+        Optional<Address> optional1=addressRepository.findById(hospital.getAddress().getAddressId());
+        if(optional1.isEmpty())
+            throw new NotFoundByidException("Address is not  found");
+
+        Address address=mapToAddress(addressRequest,optional1.get());
+        addressRepository.save(address);
+
+        return mapToAddressReponse(address);
+    }
+
+    @Override
+    public AddressResponse updateBankAddress(AddressRequest addressRequest, int bankId) {
+
+        Optional<BloodBank> optional=bloodBankRepository.findById(bankId);
+        if(optional.isEmpty()) {
+            throw new NotFoundByidException("Bank is not there!");
+        }
+         BloodBank bloodBank=optional.get();
+
+        Optional<Address> optional1=addressRepository.findById(bloodBank.getAddress().getAddressId());
+
+        Address address=mapToAddress(addressRequest,optional1.get());
+        addressRepository.save(address);
 
         return mapToAddressReponse(address);
     }

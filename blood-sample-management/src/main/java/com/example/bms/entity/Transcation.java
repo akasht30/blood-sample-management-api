@@ -1,5 +1,7 @@
 package com.example.bms.entity;
 
+import com.example.bms.entity.enums.BloodGroup;
+import com.example.bms.entity.enums.TransactionType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -20,11 +22,9 @@ public class Transcation {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int transactionId;
     private LocalDate date;
-
-
-    public enum TranscationType {
-        EMERGENCY,
-        NORMAL;
-    }
+    private BloodGroup bloodGroup;
+    private TransactionType transactionType;
     private int noOfUnits;
+
+
 }

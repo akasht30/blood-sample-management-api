@@ -8,10 +8,7 @@ import com.example.bms.utility.RestResponseBuilder;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @AllArgsConstructor
@@ -45,4 +42,50 @@ public class AddressController {
 
     }
 
+
+    @GetMapping("/get-addressof-user/{userId}")
+    public ResponseEntity<ResponseStructure<AddressResponse>> getAdressByUser(@PathVariable int userId) {
+
+        AddressResponse addressResponse=addressService.getAddressbByUser(userId);
+
+        return restResponseBuilder.success(HttpStatus.FOUND, "Address is Found from User ",addressResponse );
+
+    }
+
+    @GetMapping("/get-bankaddress/{bankId}")
+    public ResponseEntity<ResponseStructure<AddressResponse>> getBankAddress(@PathVariable int bankId) {
+
+        AddressResponse addressResponse=addressService.getBankAddress(bankId);
+
+        return restResponseBuilder.success(HttpStatus.FOUND, "Address is Found from Bank ",addressResponse );
+
+    }
+
+    @GetMapping("/get-hospitaladdress/{hospitalId}")
+    public ResponseEntity<ResponseStructure<AddressResponse>> getHospitalAddress(@PathVariable int hospitalId) {
+        AddressResponse addressResponse=addressService.getHospitalAddress(hospitalId);
+
+        return restResponseBuilder.success(HttpStatus.FOUND, "Address is Found from Hospital ",addressResponse );
+    }
+
+    @PutMapping("/update-useraddress/{userId}")
+    public ResponseEntity<ResponseStructure<AddressResponse>> updateUserAddress(@RequestBody AddressRequest addressRequest,@PathVariable int userId) {
+        AddressResponse addressResponse = addressService.updateUserById(addressRequest, userId);
+
+        return restResponseBuilder.success(HttpStatus.OK, "Address is Updated successfully ", addressResponse);
+    }
+
+    @PutMapping("/update-hositaladdress/{hospitalId}")
+    public ResponseEntity<ResponseStructure<AddressResponse>>  updateHospitalAddress(@RequestBody AddressRequest addressRequest,@PathVariable int hospitalId) {
+        AddressResponse addressResponse=addressService.updateHospitalAddress(addressRequest,hospitalId);
+
+        return restResponseBuilder.success(HttpStatus.OK, "Address is Updated successfully ", addressResponse);
+    }
+
+    public ResponseEntity<ResponseStructure<AddressResponse>> updateBankAddress(@RequestBody AddressRequest addressRequest,@PathVariable int bankId) {
+        AddressResponse addressResponse=addressService.updateBankAddress(addressRequest,bankId);
+
+        return restResponseBuilder.success(HttpStatus.OK, "Address is Updated successfully ", addressResponse);
+    }
 }
+

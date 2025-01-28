@@ -26,7 +26,7 @@ public class SecurityConfig {
 
        return   httpSecurity.csrf(csrf -> csrf.disable())
                  .authorizeHttpRequests(authorize ->
-                         authorize.requestMatchers("/register","/register-admin","/add-address/{bankId}","/add-bank","/blood-banks","/add-address-hospital/{hospitalId}").
+                         authorize.requestMatchers("/register","/register-admin","/get-bankaddress/{bankId}").
                                  permitAll().
                                  requestMatchers("/promote/{userId}").//authorizing..
                                  hasAuthority("OWNER_ADMIN").  //Change authority to owner. for actual code owner to have authority
